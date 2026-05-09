@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NNH 運用ダッシュボード</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#F8F7F3;color:#111;font-size:14px}
+.header{background:#111;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:16px;font-weight:500}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+.sync-status{font-size:11px;color:rgba(255,255,255,0.4)}
+.sync-status.ok{color:#5DCAA5}
+.sync-status.err{color:#F09595}
+.hero{background:#111;color:#fff;padding:28px 24px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.hero-inner{max-width:1000px;margin:0 auto}
+.hero-tag{font-size:10px;letter-spacing:0.2em;color:#E8774A;font-weight:500;margin-bottom:12px}
+.hero-title{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:12px}
+.hero-title em{color:#E8774A;font-style:normal}
+.hero-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.8;max-width:560px}
+.hero-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin-top:20px}
+.hero-kpi{padding:14px 18px;background:#111}
+.hero-kpi-label{font-size:10px;letter-spacing:0.12em;color:rgba(255,255,255,0.3);margin-bottom:6px}
+.hero-kpi-val{font-size:24px;font-weight:700;color:#E8774A;line-height:1}
+.hero-kpi-unit{font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px}
+.container{max-width:1000px;margin:0 auto;padding:20px}
+.nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.nav-btn{padding:7px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid #E2E0D8;background:#fff;color:#5C5A52;transition:all 0.15s}
+.nav-btn.active{background:#111;color:#fff;border-color:#111}
+.section{display:none}
+.section.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid #E2E0D8;border-radius:10px;padding:16px}
+.kpi-label{font-size:11px;color:#9E9C94;margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:500;line-height:1}
+.kpi-sub{font-size:11px;color:#9E9C94;margin-top:4px}
+.kpi-val.good{color:#2D6A4F}
+.kpi-val.warn{color:#8A6000}
+.progress-bar{height:5px;background:#E2E0D8;border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:3px;background:#2D6A4F}
+.progress-fill.warn{background:#8A6000}
+.card{background:#fff;border:1px solid #E2E0D8;border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:16px;color:#111}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:11px;color:#5C5A52;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #E2E0D8;background:#fff;color:#111;width:100%}
+.form-group textarea{min-height:60px;resize:vertical}
+.check-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.check-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#5C5A52;cursor:pointer}
+.check-item input{width:14px;height:14px;cursor:pointer}
+.btn{font-size:13px;padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid #E2E0D8}
+.btn-primary{background:#111;color:#fff;border-color:#111}
+.btn-danger{background:transparent;color:#A32D2D;border-color:#F09595;font-size:11px;padding:3px 8px}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:11px;color:#9E9C94;font-weight:500;padding:8px 10px;text-align:left;border-bottom:1px solid #E2E0D8;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:1px solid #F0EFE9;color:#111;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.b-prospect{background:#F2EAFA;color:#3C3489}
+.b-new{background:#E6F1FB;color:#0C447C}
+.b-talk{background:#FAEEDA;color:#633806}
+.b-fixed{background:#EAF3DE;color:#27500A}
+.b-pub{background:#E1F5EE;color:#085041}
+.b-paid{background:#EAF3DE;color:#27500A}
+.b-free{background:#F1EFE8;color:#444441}
+.b-done{background:#E1F5EE;color:#085041}
+.b-pending{background:#FAEEDA;color:#633806}
+.b-online{background:#E6F1FB;color:#0C447C}
+.b-offline{background:#FAECE7;color:#712B13}
+.divider{height:1px;background:#E2E0D8;margin:16px 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0EFE9;font-size:13px}
+.cost-row:last-child{border-bottom:none}
+.x-week-row{display:grid;grid-template-columns:100px 1fr 1fr 1fr 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #F0EFE9;font-size:12px}
+.x-week-row:last-child{border-bottom:none}
+.empty{text-align:center;padding:20px;color:#9E9C94;font-size:12px}
+.toast{position:fixed;bottom:24px;right:24px;background:#111;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;display:none;z-index:999}
+.toast.show{display:block}
+.pcheck{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #E2E0D8;color:#9E9C94;cursor:pointer;transition:all 0.15s}
+.pcheck.done{background:#EAF3DE;border-color:#639922;color:#27500A}
+.progress-checks{display:flex;gap:4px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">NNH 運用ダッシュボード</div>
+    <div class="header-sub" id="today-date"></div>
+  </div>
+  <div class="sync-status" id="sync-status">接続確認中...</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">NON NAME HERO ／ MISSION & GOALS</div>
+    <div class="hero-title">名もなき<em>英雄</em>たちの物語を、<br>日本中に届ける。</div>
+    <div class="hero-desc">企業の「右腕」として組織を支える人々にフォーカスするインタビューメディア。<br>取材・記事・発信を通じて、月30万円の持続可能な収益モデルを構築する。</div>
+    <div class="hero-kpis">
+      <div class="hero-kpi"><div class="hero-kpi-label">REVENUE TARGET</div><div class="hero-kpi-val">30<span style="font-size:14px">万円</span></div><div class="hero-kpi-unit">月次売上目標</div></div>
+      <div class="hero-kpi"><div class="hero-kpi-label">MAX INTERVIEWS</div><div class="hero-kpi-val">8<span style="font-size:14px">件</span></div><div class="hero-kpi-unit">月次取材上限</div></div>
+      <div class="hero-kpi"><div class="hero-kpi-label">PAID / FREE</div><div class="hero-kpi-val">4<span style="font-size:14px">/4</span></div><div class="hero-kpi-unit">有料・無料比率（初期）</div></div>
+      <div class="hero-kpi"><div class="hero-kpi-label">INTERVIEW FEE</div><div class="hero-kpi-val">3<span style="font-size:14px">万円</span></div><div class="hero-kpi-unit">通常5万円→今だけ</div></div>
+      <div class="hero-kpi"><div class="hero-kpi-label">X TARGET</div><div class="hero-kpi-val">500<span style="font-size:14px">人</span></div><div class="hero-kpi-unit">フォロワー収益化条件</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="nav">
+    <button class="nav-btn active" onclick="showTab('overview',this)">概要</button>
+    <button class="nav-btn" onclick="showTab('apo',this)">アポ管理</button>
+    <button class="nav-btn" onclick="showTab('revenue',this)">売上管理</button>
+    <button class="nav-btn" onclick="showTab('work',this)">稼働管理</button>
+    <button class="nav-btn" onclick="showTab('x',this)">X運用</button>
+  </div>
+
+  <div id="overview" class="section active">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">今月の取材件数</div><div class="kpi-val" id="ov-interviews">—</div><div class="kpi-sub">上限8件</div><div class="progress-bar"><div class="progress-fill" id="ov-int-bar" style="width:0%"></div></div></div>
+      <div class="kpi"><div class="kpi-label">今月の確定売上</div><div class="kpi-val good" id="ov-revenue">—</div><div class="kpi-sub">目標 ¥300,000</div><div class="progress-bar"><div class="progress-fill warn" id="ov-rev-bar" style="width:0%"></div></div></div>
+      <div class="kpi"><div class="kpi-label">アポ中の案件</div><div class="kpi-val" id="ov-apo">—</div><div class="kpi-sub">件</div></div>
+      <div class="kpi"><div class="kpi-label">Xフォロワー</div><div class="kpi-val warn" id="ov-followers">—</div><div class="kpi-sub">目標500人</div><div class="progress-bar"><div class="progress-fill warn" id="ov-x-bar" style="width:0%"></div></div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">今月の人件費</div>
+        <div class="cost-row"><span style="color:#5C5A52">池田（5,000円/本）</span><span id="ov-ikeda" style="font-weight:500">¥0</span></div>
+        <div class="cost-row"><span style="color:#5C5A52">榊原（1,300円/H）</span><span id="ov-sakibara" style="font-weight:500">¥0</span></div>
+        <div class="cost-row"><span style="color:#5C5A52">井上（1,300円/H）</span><span id="ov-inoue" style="font-weight:500">¥0</span></div>
+        <div class="cost-row"><span style="color:#5C5A52">谷口（1,300円/H）</span><span id="ov-taniguchi" style="font-weight:500">¥0</span></div>
+        <div class="divider"></div>
+        <div class="cost-row"><span style="font-weight:500">合計</span><span id="ov-total-cost" style="font-weight:500;color:#C94F1E">¥0</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">直近のアポ・取材</div>
+        <div id="ov-recent"><div class="empty">データなし</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="apo" class="section">
+    <div class="card">
+      <div class="card-title">新規アポを追加</div>
+      <div class="form-row">
+        <div class="form-group"><label>企業名</label><input type="text" id="apo-company" placeholder="○○株式会社"></div>
+        <div class="form-group"><label>担当者名（先方）</label><input type="text" id="apo-contact" placeholder="田中 様"></div>
+        <div class="form-group"><label>アポ獲得者</label><select id="apo-getter"><option>榊原</option><option>縄間</option><option>川原</option><option>小野寺</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>ステータス</label>
+          <select id="apo-status"><option value="prospect">見込み</option><option value="new">アポ取得</option><option value="talk">面談調整中</option><option value="fixed">取材確定</option><option value="pub">掲載済</option></select>
+        </div>
+        <div class="form-group"><label>有料 / 無料</label><select id="apo-type"><option value="paid">有料（3万円）</option><option value="free">無料</option></select></div>
+        <div class="form-group"><label>オンライン / 対面</label><select id="apo-format"><option value="online">オンライン</option><option value="offline">対面</option></select></div>
+        <div class="form-group"><label>取材予定日</label>
+          <select id="apo-date-type" onchange="toggleDateInput()"><option value="fixed">日付を入力</option><option value="undecided">未定</option></select>
+        </div>
+        <div class="form-group" id="apo-date-wrap"><label>日付</label><input type="date" id="apo-date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>回答フォーム</label><select id="apo-form"><option value="">—</option><option value="done">⭕ 受領済</option><option value="pending">❌ 未受領</option></select></div>
+        <div class="form-group"><label>メモ</label><input type="text" id="apo-memo" placeholder="特記事項など"></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:#5C5A52;font-weight:500;margin-bottom:8px">進捗チェック</div>
+        <div class="check-row">
+          <label class="check-item"><input type="checkbox" id="chk-mail">初回メール送付</label>
+          <label class="check-item"><input type="checkbox" id="chk-line">LINE登録完了</label>
+          <label class="check-item"><input type="checkbox" id="chk-draft">初稿完成</label>
+          <label class="check-item"><input type="checkbox" id="chk-posted">投稿済</label>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="apo-submit" onclick="addApo()">追加する</button>
+    </div>
+    <div class="card">
+      <div class="card-title">アポ一覧</div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>企業名</th><th>獲得者</th><th>ステータス</th><th>種別</th><th>形式</th><th>取材日</th><th>フォーム</th>
+            <th title="初回メール / LINE登録 / 初稿完成 / 投稿済">進捗</th><th>操作</th>
+          </tr></thead>
+          <tbody id="apo-list"><tr><td colspan="9" class="empty">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="revenue" class="section">
+    <div class="card">
+      <div class="card-title">売上を記録</div>
+      <div class="form-row">
+        <div class="form-group"><label>企業名</label><input type="text" id="rev-company" placeholder="○○株式会社"></div>
+        <div class="form-group"><label>種別</label><select id="rev-type"><option value="paid">有料取材（3万円）</option><option value="free">無料取材</option><option value="x">X収益</option><option value="member">会員サービス</option></select></div>
+        <div class="form-group"><label>金額（円）</label><input type="number" id="rev-amount" placeholder="30000"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>入金状況</label><select id="rev-paid-status"><option value="pending">未入金</option><option value="done">入金済</option></select></div>
+        <div class="form-group"><label>日付</label><input type="date" id="rev-date"></div>
+      </div>
+      <button class="btn btn-primary" id="rev-submit" onclick="addRevenue()">追加する</button>
+    </div>
+    <div class="kpi-grid" style="margin-bottom:16px">
+      <div class="kpi"><div class="kpi-label">確定売上（今月）</div><div class="kpi-val good" id="rev-total">¥0</div></div>
+      <div class="kpi"><div class="kpi-label">有料取材件数</div><div class="kpi-val" id="rev-paid-count">0件</div><div class="kpi-sub">目標4件</div></div>
+      <div class="kpi"><div class="kpi-label">無料取材件数</div><div class="kpi-val" id="rev-free-count">0件</div><div class="kpi-sub">目標4件</div></div>
+      <div class="kpi"><div class="kpi-label">目標達成率</div><div class="kpi-val" id="rev-rate">0%</div><div class="kpi-sub">目標30万円</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">売上一覧</div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>企業名</th><th>種別</th><th>金額</th><th>入金</th><th>日付</th><th>操作</th></tr></thead>
+          <tbody id="rev-list"><tr><td colspan="6" class="empty">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="work" class="section">
+    <div class="card">
+      <div class="card-title">稼働時間を入力</div>
+      <div class="form-row">
+        <div class="form-group"><label>担当者</label><select id="work-person"><option>榊原</option><option>井上</option><option>谷口</option><option>池田</option></select></div>
+        <div class="form-group"><label>業務内容</label><select id="work-task"><option>メール営業</option><option>取材後対応</option><option>WordPress掲載</option><option>X運用</option><option>フォロー管理</option><option>ノンネームタイムズ</option><option>MTG</option><option>記事執筆</option><option>その他</option></select></div>
+        <div class="form-group"><label>稼働時間（H）</label><input type="number" id="work-hours" placeholder="2" step="0.5" min="0.5"></div>
+        <div class="form-group"><label>日付</label><input type="date" id="work-date"></div>
+      </div>
+      <button class="btn btn-primary" id="work-submit" onclick="addWork()">追加する</button>
+    </div>
+    <div class="card">
+      <div class="card-title">今月の稼働・コスト集計</div>
+      <table class="tbl">
+        <thead><tr><th>担当者</th><th>時給</th><th>合計時間</th><th>コスト</th></tr></thead>
+        <tbody id="work-summary"><tr><td colspan="4" class="empty">データなし</td></tr></tbody>
+      </table>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:500"><span>今月の人件費合計</span><span id="work-total-cost" style="color:#C94F1E">¥0</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">稼働ログ</div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>担当者</th><th>業務</th><th>時間</th><th>日付</th><th>操作</th></tr></thead>
+          <tbody id="work-list"><tr><td colspan="5" class="empty">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="x" class="section">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">現在のフォロワー</div><div class="kpi-val warn" id="x-followers-show">415</div><div class="kpi-sub">目標500人（残り<span id="x-remaining">85</span>人）</div><div class="progress-bar"><div class="progress-fill warn" id="x-prog" style="width:83%"></div></div></div>
+      <div class="kpi"><div class="kpi-label">今週のインプレッション</div><div class="kpi-val" id="x-imp-show">—</div><div class="kpi-sub">平均300／日</div></div>
+      <div class="kpi"><div class="kpi-label">今週の投稿数</div><div class="kpi-val" id="x-post-show">—</div><div class="kpi-sub">目標14投稿／週</div></div>
+      <div class="kpi"><div class="kpi-label">収益化まで</div><div class="kpi-val warn" id="x-status-show">未達成</div><div class="kpi-sub">500人＋500万imp</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">毎週月曜日の記録</div>
+      <div class="form-row">
+        <div class="form-group"><label>記録週（月曜日）</label><input type="date" id="x-week"></div>
+        <div class="form-group"><label>フォロワー数</label><input type="number" id="x-followers" placeholder="415"></div>
+        <div class="form-group"><label>週間インプレッション</label><input type="number" id="x-imp" placeholder="2100"></div>
+        <div class="form-group"><label>週間投稿数</label><input type="number" id="x-posts" placeholder="14"></div>
+      </div>
+      <div class="form-row"><div class="form-group"><label>メモ</label><textarea id="x-memo" placeholder="バズった投稿・特記事項など"></textarea></div></div>
+      <button class="btn btn-primary" id="x-submit" onclick="addXRecord()">記録する</button>
+    </div>
+    <div class="card">
+      <div class="card-title">週次記録一覧</div>
+      <div class="x-week-row" style="font-size:11px;color:#9E9C94;font-weight:500"><span>週</span><span>フォロワー</span><span>インプレッション</span><span>投稿数</span><span>操作</span></div>
+      <div id="x-list"><div class="empty">読み込み中...</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbwi8WM41VP9VDAs0fbZqk97b-vetUvdNk80226kefJmq9JzbLVFNr49ZuKktxnxQDHLAg/exec';
+const rates={榊原:1300,井上:1300,谷口:1300,池田:5000};
+let data={apo:[],revenue:[],work:[],x:[]};
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function setSync(ok){const el=document.getElementById('sync-status');el.textContent=ok?'スプレッドシート接続中':'接続エラー';el.className='sync-status '+(ok?'ok':'err');}
+
+async function api(sheet,action,params={}){
+  const url=new URL(API);
+  url.searchParams.set('sheet',sheet);url.searchParams.set('action',action);
+  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):v));
+  const res=await fetch(url.toString());
+  const json=await res.json();
+  if(json.status!=='ok')throw new Error(json.message);
+  return json.data;
+}
+
+async function loadAll(){
+  try{
+    const[apo,revenue,work,x]=await Promise.all([api('アポ管理','get'),api('売上管理','get'),api('稼働管理','get'),api('X運用','get')]);
+    data.apo=apo||[];data.revenue=revenue||[];data.work=work||[];data.x=x||[];
+    setSync(true);render();
+  }catch(e){setSync(false);}
+}
+
+function showTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');btn.classList.add('active');
+}
+
+function toggleDateInput(){
+  document.getElementById('apo-date-wrap').style.display=document.getElementById('apo-date-type').value==='undecided'?'none':'flex';
+}
+
+const statusMap={prospect:['見込み','b-prospect'],new:['アポ取得','b-new'],talk:['面談調整中','b-talk'],fixed:['取材確定','b-fixed'],pub:['掲載済','b-pub']};
+function badge(t,c){return`<span class="badge ${c}">${t}</span>`;}
+function statusBadge(s){const[l,c]=statusMap[s]||['—',''];return badge(l,c);}
+function typeBadge(t){return t==='paid'?badge('有料','b-paid'):badge('無料','b-free');}
+function formatBadge(f){return f==='offline'?badge('対面','b-offline'):badge('オンライン','b-online');}
+function formIcon(f){return f==='done'?'⭕':f==='pending'?'❌':'—';}
+
+async function addApo(){
+  const company=document.getElementById('apo-company').value.trim();
+  if(!company)return alert('企業名を入力してください');
+  const btn=document.getElementById('apo-submit');btn.disabled=true;btn.textContent='保存中...';
+  const dateType=document.getElementById('apo-date-type').value;
+  const row={id:Date.now(),company,contact:document.getElementById('apo-contact').value.trim(),getter:document.getElementById('apo-getter').value,status:document.getElementById('apo-status').value,type:document.getElementById('apo-type').value,format:document.getElementById('apo-format').value,date:dateType==='undecided'?'未定':document.getElementById('apo-date').value,form:document.getElementById('apo-form').value,memo:document.getElementById('apo-memo').value.trim(),chkMail:document.getElementById('chk-mail').checked?'1':'0',chkLine:document.getElementById('chk-line').checked?'1':'0',chkDraft:document.getElementById('chk-draft').checked?'1':'0',chkPosted:document.getElementById('chk-posted').checked?'1':'0'};
+  try{
+    await api('アポ管理','add',{data:row});data.apo.push(row);
+    ['apo-company','apo-contact','apo-memo'].forEach(id=>document.getElementById(id).value='');
+    ['chk-mail','chk-line','chk-draft','chk-posted'].forEach(id=>document.getElementById(id).checked=false);
+    showToast('アポを追加しました');render();
+  }catch(e){alert('保存に失敗しました');}
+  btn.disabled=false;btn.textContent='追加する';
+}
+
+async function deleteApo(id){
+  if(!confirm('削除しますか？'))return;
+  try{await api('アポ管理','delete',{id});data.apo=data.apo.filter(a=>String(a.id)!==String(id));showToast('削除しました');render();}catch(e){alert('削除に失敗しました');}
+}
+
+async function updateApoStatus(id,val){
+  try{await api('アポ管理','update',{id,data:{status:val}});const a=data.apo.find(x=>String(x.id)===String(id));if(a)a.status=val;showToast('更新しました');render();}catch(e){alert('更新に失敗しました');}
+}
+
+async function toggleCheck(id,field){
+  const a=data.apo.find(x=>String(x.id)===String(id));if(!a)return;
+  const newVal=a[field]==='1'?'0':'1';
+  try{await api('アポ管理','update',{id,data:{[field]:newVal}});a[field]=newVal;showToast('更新しました');render();}catch(e){alert('更新に失敗しました');}
+}
+
+async function addRevenue(){
+  const company=document.getElementById('rev-company').value.trim();
+  const amount=parseInt(document.getElementById('rev-amount').value)||0;
+  if(!company)return alert('企業名を入力してください');
+  const btn=document.getElementById('rev-submit');btn.disabled=true;btn.textContent='保存中...';
+  const row={id:Date.now(),company,type:document.getElementById('rev-type').value,amount,paid:document.getElementById('rev-paid-status').value,date:document.getElementById('rev-date').value};
+  try{await api('売上管理','add',{data:row});data.revenue.push(row);document.getElementById('rev-company').value='';document.getElementById('rev-amount').value='';showToast('売上を記録しました');render();}catch(e){alert('保存に失敗しました');}
+  btn.disabled=false;btn.textContent='追加する';
+}
+
+async function deleteRevenue(id){
+  if(!confirm('削除しますか？'))return;
+  try{await api('売上管理','delete',{id});data.revenue=data.revenue.filter(r=>String(r.id)!==String(id));showToast('削除しました');render();}catch(e){alert('削除に失敗しました');}
+}
+
+async function addWork(){
+  const hours=parseFloat(document.getElementById('work-hours').value)||0;
+  if(!hours)return alert('稼働時間を入力してください');
+  const btn=document.getElementById('work-submit');btn.disabled=true;btn.textContent='保存中...';
+  const row={id:Date.now(),person:document.getElementById('work-person').value,task:document.getElementById('work-task').value,hours,date:document.getElementById('work-date').value};
+  try{await api('稼働管理','add',{data:row});data.work.push(row);document.getElementById('work-hours').value='';showToast('稼働を記録しました');render();}catch(e){alert('保存に失敗しました');}
+  btn.disabled=false;btn.textContent='追加する';
+}
+
+async function deleteWork(id){
+  if(!confirm('削除しますか？'))return;
+  try{await api('稼働管理','delete',{id});data.work=data.work.filter(w=>String(w.id)!==String(id));showToast('削除しました');render();}catch(e){alert('削除に失敗しました');}
+}
+
+async function addXRecord(){
+  const followers=parseInt(document.getElementById('x-followers').value)||0;
+  if(!followers)return alert('フォロワー数を入力してください');
+  const btn=document.getElementById('x-submit');btn.disabled=true;btn.textContent='保存中...';
+  const row={id:Date.now(),week:document.getElementById('x-week').value,followers,imp:parseInt(document.getElementById('x-imp').value)||0,posts:parseInt(document.getElementById('x-posts').value)||0,memo:document.getElementById('x-memo').value.trim()};
+  try{await api('X運用','add',{data:row});data.x.unshift(row);['x-followers','x-imp','x-posts','x-memo'].forEach(id=>document.getElementById(id).value='');showToast('X運用を記録しました');render();}catch(e){alert('保存に失敗しました');}
+  btn.disabled=false;btn.textContent='記録する';
+}
+
+async function deleteXRecord(id){
+  if(!confirm('削除しますか？'))return;
+  try{await api('X運用','delete',{id});data.x=data.x.filter(x=>String(x.id)!==String(id));showToast('削除しました');render();}catch(e){alert('削除に失敗しました');}
+}
+
+function calcCost(){
+  const s={};
+  data.work.forEach(w=>{
+    if(!s[w.person])s[w.person]={hours:0,cost:0};
+    s[w.person].hours+=parseFloat(w.hours)||0;
+    s[w.person].cost+=(parseFloat(w.hours)||0)*(rates[w.person]||1300);
+  });
+  return s;
+}
+
+function render(){
+  const totalRev=data.revenue.filter(r=>r.paid==='done').reduce((s,r)=>s+(parseInt(r.amount)||0),0);
+  const paidCount=data.revenue.filter(r=>r.type==='paid').length;
+  const freeCount=data.revenue.filter(r=>r.type==='free').length;
+  const fixedApos=data.apo.filter(a=>a.status==='fixed'||a.status==='pub').length;
+  const activeApos=data.apo.filter(a=>a.status!=='pub').length;
+  const cs=calcCost();
+  const totalCost=Object.values(cs).reduce((s,v)=>s+Math.round(v.cost),0);
+  const lx=data.x[0];
+  const xf=lx?parseInt(lx.followers)||415:415;
+
+  document.getElementById('ov-interviews').textContent=fixedApos;
+  document.getElementById('ov-int-bar').style.width=Math.min(fixedApos/8*100,100)+'%';
+  document.getElementById('ov-revenue').textContent='¥'+totalRev.toLocaleString();
+  document.getElementById('ov-rev-bar').style.width=Math.min(totalRev/300000*100,100)+'%';
+  document.getElementById('ov-apo').textContent=activeApos;
+  document.getElementById('ov-followers').textContent=xf;
+  document.getElementById('ov-x-bar').style.width=Math.min(xf/500*100,100)+'%';
+  document.getElementById('ov-ikeda').textContent='¥'+Math.round(cs['池田']?.cost||0).toLocaleString();
+  document.getElementById('ov-sakibara').textContent='¥'+Math.round(cs['榊原']?.cost||0).toLocaleString();
+  document.getElementById('ov-inoue').textContent='¥'+Math.round(cs['井上']?.cost||0).toLocaleString();
+  document.getElementById('ov-taniguchi').textContent='¥'+Math.round(cs['谷口']?.cost||0).toLocaleString();
+  document.getElementById('ov-total-cost').textContent='¥'+totalCost.toLocaleString();
+
+  const recent=[...data.apo].slice(-4).reverse();
+  document.getElementById('ov-recent').innerHTML=recent.length?recent.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #F0EFE9"><span style="font-size:12px">${a.company}</span>${statusBadge(a.status)}</div>`).join(''):'<div class="empty">データなし</div>';
+
+  const checks=[['chkMail','初回メール'],['chkLine','LINE登録'],['chkDraft','初稿完成'],['chkPosted','投稿済']];
+  document.getElementById('apo-list').innerHTML=data.apo.length?[...data.apo].reverse().map(a=>`
+    <tr>
+      <td style="font-weight:500;min-width:110px">${a.company}</td>
+      <td>${a.getter||'—'}</td>
+      <td><select onchange="updateApoStatus(${a.id},this.value)" style="font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid #E2E0D8;background:#fff">
+        ${Object.entries(statusMap).map(([v,[l]])=>`<option value="${v}"${String(a.status)===v?' selected':''}>${l}</option>`).join('')}
+      </select></td>
+      <td>${typeBadge(a.type)}</td>
+      <td>${formatBadge(a.format)}</td>
+      <td style="white-space:nowrap">${a.date||'—'}</td>
+      <td style="text-align:center;font-size:16px">${formIcon(a.form)}</td>
+      <td><div class="progress-checks">${checks.map(([k,l])=>`<div class="pcheck${a[k]==='1'?' done':''}" title="${l}" onclick="toggleCheck(${a.id},'${k}')">${a[k]==='1'?'✓':'·'}</div>`).join('')}</div></td>
+      <td><button class="btn btn-danger" onclick="deleteApo(${a.id})">削除</button></td>
+    </tr>`).join(''):'<tr><td colspan="9" class="empty">データなし</td></tr>';
+
+  document.getElementById('rev-total').textContent='¥'+totalRev.toLocaleString();
+  document.getElementById('rev-paid-count').textContent=paidCount+'件';
+  document.getElementById('rev-free-count').textContent=freeCount+'件';
+  document.getElementById('rev-rate').textContent=Math.round(totalRev/300000*100)+'%';
+  const tl={paid:'有料取材',free:'無料取材',x:'X収益',member:'会員'};
+  document.getElementById('rev-list').innerHTML=data.revenue.length?[...data.revenue].reverse().map(r=>`<tr><td>${r.company}</td><td>${tl[r.type]||r.type}</td><td>¥${(parseInt(r.amount)||0).toLocaleString()}</td><td>${badge(r.paid==='done'?'入金済':'未入金',r.paid==='done'?'b-done':'b-pending')}</td><td>${r.date||'—'}</td><td><button class="btn btn-danger" onclick="deleteRevenue(${r.id})">削除</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">データなし</td></tr>';
+
+  const persons=['榊原','井上','谷口','池田'];
+  document.getElementById('work-summary').innerHTML=persons.filter(p=>cs[p]).map(p=>`<tr><td>${p}</td><td style="color:#9E9C94">${p==='池田'?'5,000円/本':`${(rates[p]||1300).toLocaleString()}円/H`}</td><td>${cs[p].hours.toFixed(1)}H</td><td>¥${Math.round(cs[p].cost).toLocaleString()}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">データなし</td></tr>';
+  document.getElementById('work-total-cost').textContent='¥'+totalCost.toLocaleString();
+  document.getElementById('work-list').innerHTML=data.work.length?[...data.work].reverse().map(w=>`<tr><td>${w.person}</td><td>${w.task}</td><td>${w.hours}H</td><td>${w.date||'—'}</td><td><button class="btn btn-danger" onclick="deleteWork(${w.id})">削除</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">データなし</td></tr>';
+
+  document.getElementById('x-followers-show').textContent=xf;
+  document.getElementById('x-remaining').textContent=Math.max(500-xf,0);
+  document.getElementById('x-prog').style.width=Math.min(xf/500*100,100)+'%';
+  if(lx){document.getElementById('x-imp-show').textContent=(parseInt(lx.imp)||0).toLocaleString();document.getElementById('x-post-show').textContent=lx.posts||'—';}
+  document.getElementById('x-status-show').textContent=xf>=500?'条件達成':'未達成';
+  document.getElementById('x-list').innerHTML=data.x.length?data.x.map(x=>`<div class="x-week-row"><span>${x.week||'—'}</span><span>${(parseInt(x.followers)||0).toLocaleString()}人</span><span>${(parseInt(x.imp)||0).toLocaleString()}</span><span>${x.posts||0}件</span><button class="btn btn-danger" onclick="deleteXRecord(${x.id})">削除</button></div>`).join(''):'<div class="empty">データなし</div>';
+}
+
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+const today=new Date().toISOString().slice(0,10);
+['rev-date','work-date','x-week','apo-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today;});
+loadAll();
+setInterval(loadAll,60000);
+</script>
+</body>
+</html>
