@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ノンネーム・ヒーロー｜戦略資料</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+
+  :root {
+    --black: #111111;
+    --white: #FAFAF8;
+    --gray-50: #F8F7F3;
+    --gray-100: #F0EFE9;
+    --gray-200: #E2E0D8;
+    --gray-400: #9E9C94;
+    --gray-600: #5C5A52;
+    --accent: #C94F1E;
+    --accent-light: #F7EDE8;
+    --accent-mid: #E8774A;
+    --blue: #1A4F8A;
+    --blue-light: #E8EFF8;
+    --green: #2D6A4F;
+    --green-light: #E8F4EE;
+    --amber: #8A6000;
+    --amber-light: #FFF5D6;
+    --purple: #5B2D8A;
+    --purple-light: #F2EAFA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== COVER ===== */
+  .cover {
+    background: var(--black);
+    color: var(--white);
+    padding: 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::after {
+    content: 'NNH';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 240px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.03);
+    letter-spacing: -10px;
+    pointer-events: none;
+  }
+
+  .cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+
+  .cover-tag {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent-mid);
+    font-weight: 500;
+  }
+
+  .cover-date {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .cover-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 0; }
+
+  .cover-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .cover-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 24px;
+  }
+
+  .cover-title em {
+    font-style: normal;
+    color: var(--accent-mid);
+  }
+
+  .cover-desc {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    max-width: 500px;
+    line-height: 1.9;
+    font-weight: 300;
+  }
+
+  .cover-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 32px;
+  }
+
+  .cover-kpi {
+    padding: 20px 24px;
+  }
+
+  .cover-kpi-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 8px;
+  }
+
+  .cover-kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent-mid);
+    line-height: 1;
+  }
+
+  .cover-kpi-unit {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+  }
+
+  /* ===== PAGE ===== */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 72px 60px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .page:last-of-type { border-bottom: none; }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .section-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* ===== GOAL CARDS ===== */
+  .goal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .goal-card {
+    border-radius: 14px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .goal-card.primary { background: var(--black); color: var(--white); }
+  .goal-card.secondary { background: var(--gray-100); }
+  .goal-card.tertiary { background: var(--purple-light); }
+
+  .goal-num {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .goal-card.primary .goal-num { color: var(--accent-mid); }
+  .goal-card.secondary .goal-num { color: var(--black); }
+  .goal-card.tertiary .goal-num { color: var(--purple); }
+
+  .goal-unit { font-size: 13px; color: var(--gray-400); margin-bottom: 12px; }
+  .goal-card.primary .goal-unit { color: rgba(255,255,255,0.4); }
+  .goal-card.tertiary .goal-unit { color: var(--purple); opacity: 0.6; }
+
+  .goal-desc { font-size: 12px; line-height: 1.7; }
+  .goal-card.primary .goal-desc { color: rgba(255,255,255,0.6); }
+  .goal-card.secondary .goal-desc { color: var(--gray-600); }
+  .goal-card.tertiary .goal-desc { color: var(--purple); opacity: 0.8; }
+
+  /* ===== REVENUE ===== */
+  .revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .revenue-table th {
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .revenue-table th:first-child { border-radius: 8px 0 0 0; }
+  .revenue-table th:last-child { border-radius: 0 8px 0 0; }
+
+  .revenue-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .revenue-table tr:last-child td { border-bottom: none; }
+  .revenue-table tr:hover td { background: var(--gray-50); }
+
+  .revenue-table tr.total td {
+    background: var(--accent-light);
+    font-weight: 700;
+    border-top: 2px solid var(--accent);
+  }
+
+  .amount { font-weight: 700; color: var(--accent); }
+  .muted { color: var(--gray-400); font-size: 12px; }
+
+  /* ===== PIPELINE ===== */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .pipe-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+
+  .pipe-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .pipe-card.mail::before { background: var(--blue); }
+  .pipe-card.intro::before { background: var(--green); }
+  .pipe-card.tel::before { background: var(--amber); }
+
+  .pipe-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pipe-person {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .pipe-card.mail .pipe-person { background: var(--blue-light); color: var(--blue); }
+  .pipe-card.intro .pipe-person { background: var(--green-light); color: var(--green); }
+  .pipe-card.tel .pipe-person { background: var(--amber-light); color: var(--amber); }
+
+  .pipe-num {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pipe-card.mail .pipe-num { color: var(--blue); }
+  .pipe-card.intro .pipe-num { color: var(--green); }
+  .pipe-card.tel .pipe-num { color: var(--amber); }
+
+  .pipe-detail { font-size: 12px; color: var(--gray-600); line-height: 1.7; margin-top: 8px; }
+
+  /* ===== FLOW ===== */
+  .flow-wrap { margin-bottom: 32px; }
+
+  .flow-phase { margin-bottom: 28px; }
+
+  .phase-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  .phase-tag.p1 { background: var(--blue-light); color: var(--blue); }
+  .phase-tag.p2 { background: var(--accent-light); color: var(--accent); }
+  .phase-tag.p3 { background: var(--green-light); color: var(--green); }
+  .phase-tag.p4 { background: var(--purple-light); color: var(--purple); }
+
+  .flow-steps {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .flow-step {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    min-width: 120px;
+  }
+
+  .flow-step-name { font-weight: 500; }
+
+  .flow-step-who {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: var(--accent);
+  }
+
+  .flow-arr {
+    display: flex;
+    align-items: center;
+    color: var(--gray-400);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ===== TEAM ===== */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .team-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .team-dept {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .dept-nnh { background: var(--accent-light); color: var(--accent); }
+  .dept-nhub { background: var(--amber-light); color: var(--amber); }
+  .dept-writer { background: var(--green-light); color: var(--green); }
+
+  .team-name { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+
+  .team-tasks { list-style: none; }
+  .team-tasks li {
+    font-size: 12px;
+    color: var(--gray-600);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.6;
+  }
+  .team-tasks li:last-child { border-bottom: none; }
+  .team-tasks li::before {
+    content: '–';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .team-cost {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  /* ===== COST TABLE ===== */
+  .cost-wrap {
+    background: var(--gray-50);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cost-table th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    letter-spacing: 0.1em;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .cost-table td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+
+  .cost-table tr:last-child td { border-bottom: none; }
+
+  .cost-num { font-weight: 700; text-align: right; }
+  .cost-note { font-size: 11px; color: var(--gray-400); }
+
+  .cost-total {
+    background: var(--black);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .cost-total-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .cost-total-value { font-size: 22px; font-weight: 700; color: var(--accent-mid); }
+
+  /* ===== X STRATEGY ===== */
+  .x-wrap {
+    background: var(--black);
+    border-radius: 16px;
+    padding: 36px;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .x-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .x-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--white);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--black);
+    flex-shrink: 0;
+  }
+
+  .x-header-text h3 { font-size: 16px; font-weight: 700; }
+  .x-header-text p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+  .x-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .x-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .x-card-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent-mid);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .x-card-content {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+  }
+
+  .x-status {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .x-status-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-mid);
+  }
+
+  /* ===== ROADMAP ===== */
+  .roadmap { position: relative; padding-left: 100px; }
+
+  .roadmap-line {
+    position: absolute;
+    left: 68px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--gray-200);
+  }
+
+  .roadmap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .roadmap-month {
+    position: absolute;
+    left: -100px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    width: 60px;
+    text-align: right;
+    padding-top: 6px;
+  }
+
+  .roadmap-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 6px;
+    position: absolute;
+    left: -30px;
+    z-index: 1;
+  }
+
+  .roadmap-item.goal .roadmap-dot {
+    width: 16px;
+    height: 16px;
+    background: var(--black);
+    left: -32px;
+    margin-top: 4px;
+  }
+
+  .roadmap-content {
+    background: var(--gray-100);
+    border-radius: 10px;
+    padding: 16px 20px;
+    flex: 1;
+  }
+
+  .roadmap-item.goal .roadmap-content {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  .roadmap-target {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .roadmap-item.goal .roadmap-target { color: var(--accent-mid); }
+
+  .roadmap-detail {
+    font-size: 12px;
+    color: var(--gray-600);
+    line-height: 1.7;
+  }
+
+  .roadmap-item.goal .roadmap-detail { color: rgba(255,255,255,0.5); }
+
+  /* ===== NOTE BOX ===== */
+  .note {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--black);
+    margin-top: 16px;
+  }
+
+  .note strong { color: var(--accent); }
+
+  /* ===== SUMMARY TABLE ===== */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .summary-table th {
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  .summary-table th:first-child { border-radius: 8px 0 0 0; }
+  .summary-table th:last-child { border-radius: 0 8px 0 0; }
+
+  .summary-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  .summary-table tr:hover td { background: var(--gray-50); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .badge-nnh { background: var(--accent-light); color: var(--accent); }
+  .badge-nhub { background: var(--amber-light); color: var(--amber); }
+  .badge-writer { background: var(--green-light); color: var(--green); }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: var(--black);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 40px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .footer strong { color: rgba(255,255,255,0.8); display: block; margin-bottom: 6px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-tag">NON NAME HERO ／ 戦略資料</div>
+    <div class="cover-date">2025年5月</div>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-eyebrow">CONFIDENTIAL ／ 代表確認用</div>
+    <div class="cover-title">
+      ノンネーム・ヒーロー<br>
+      <em>攻略戦略と</em>実行計画
+    </div>
+    <div class="cover-desc">
+      月30万円の売上達成に向けた戦略・役割・フロー・コストの全体像をまとめた資料です。現状の認識確認と、この体制で動かすことへの合意を目的としています。
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-kpi">
+      <div class="cover-kpi-label">MONTHLY REVENUE TARGET</div>
+      <div class="cover-kpi-value">30<span style="font-size:18px;">万円</span></div>
+      <div class="cover-kpi-unit">月次売上目標</div>
+    </div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-label">MONTHLY INTERVIEWS</div>
+      <div class="cover-kpi-value">8<span style="font-size:18px;">件</span></div>
+      <div class="cover-kpi-unit">月次取材上限</div>
+    </div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-label">PAID / FREE RATIO</div>
+      <div class="cover-kpi-value">4<span style="font-size:18px;">/</span>4</div>
+      <div class="cover-kpi-unit">有料・無料の比率（初期）</div>
+    </div>
+  </div>
+</div>
+
+<!-- 01: 目標 -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">01</span>
+    <h2 class="section-title">目標設定</h2>
+  </div>
+
+  <div class="goal-grid">
+    <div class="goal-card primary">
+      <div class="goal-num">30</div>
+      <div class="goal-unit">万円／月（売上目標）</div>
+      <div class="goal-desc">有料取材・X収益化・会員サービスを組み合わせた複合収益モデルで達成を目指す。</div>
+    </div>
+    <div class="goal-card secondary">
+      <div class="goal-num">8</div>
+      <div class="goal-unit">件／月（取材上限）</div>
+      <div class="goal-desc">川原・池田の2名体制で月最大8件。キャパシティを踏まえた現実的な上限として設定。</div>
+    </div>
+    <div class="goal-card tertiary">
+      <div class="goal-num">X</div>
+      <div class="goal-unit">収益化の達成</div>
+      <div class="goal-desc">フォロワー500人以上・インプレッション500万達成により広告収益シェアを獲得。</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>有料・無料の基準：</strong>メール営業は<strong>基本有料（通常5万円→今だけ3万円）</strong>で案内。無料取材は紹介・知人のみに限定。初期は有料4件・無料4件でスタートし、徐々に有料比率を上げていく。
+  </div>
+</div>
+
+<!-- 02: 収益モデル -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">02</span>
+    <h2 class="section-title">収益モデル</h2>
+  </div>
+
+  <table class="revenue-table">
+    <thead>
+      <tr>
+        <th>収益源</th>
+        <th>単価</th>
+        <th>件数（初期）</th>
+        <th>月次売上</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>有料取材</strong></td>
+        <td>3万円／件<br><span class="muted">（通常5万円）</span></td>
+        <td>4件</td>
+        <td class="amount">12万円</td>
+        <td class="muted">徐々に8件に増やす</td>
+      </tr>
+      <tr>
+        <td><strong>無料取材</strong></td>
+        <td>0円</td>
+        <td>4件</td>
+        <td class="muted">0円</td>
+        <td class="muted">実績作り・空き枠活用</td>
+      </tr>
+      <tr>
+        <td><strong>X収益化</strong></td>
+        <td>広告収益シェア</td>
+        <td>条件達成後</td>
+        <td class="muted">目標値</td>
+        <td class="muted">達成次第積み上げ</td>
+      </tr>
+      <tr>
+        <td><strong>会員サービス</strong></td>
+        <td>メルマガ・限定記事等</td>
+        <td>–</td>
+        <td class="muted">目標値</td>
+        <td class="muted">今後設計</td>
+      </tr>
+      <tr class="total">
+        <td colspan="3"><strong>初期スタート時の月次売上</strong></td>
+        <td class="amount">12万円〜</td>
+        <td class="muted">有料比率向上で30万へ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>月30万円への道筋：</strong>有料4件（12万）→有料6件（18万）→有料8件（24万）と段階的に引き上げ、X収益化・会員サービスで残りを補填。概ね6ヶ月以内での達成を目指す。
+  </div>
+</div>
+
+<!-- 03: アポ獲得戦略 -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">03</span>
+    <h2 class="section-title">アポ獲得戦略</h2>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipe-card mail">
+      <div class="pipe-title">📧 メール営業</div>
+      <div class="pipe-person">榊原</div>
+      <div class="pipe-num">7〜14件</div>
+      <div style="font-size:11px;color:var(--gray-400);">見込みアポ数／月</div>
+      <div class="pipe-detail">
+        Made in Local等エンブレム系サイト掲載企業にアプローチ。月150〜200件送付・転換率5〜7%で試算。リストは類似サイトを横断して確保。
+      </div>
+    </div>
+    <div class="pipe-card intro">
+      <div class="pipe-title">🤝 紹介</div>
+      <div class="pipe-person">縄間 ＋ 川原</div>
+      <div class="pipe-num">3〜4件</div>
+      <div style="font-size:11px;color:var(--gray-400);">見込みアポ数／月</div>
+      <div class="pipe-detail">
+        縄間：月3件、川原：月1件を見込む。掲載報告のタイミングで次の紹介を依頼する連鎖型で獲得。
+      </div>
+    </div>
+    <div class="pipe-card tel">
+      <div class="pipe-title">📞 N-HUBへの繋ぎ</div>
+      <div class="pipe-person">縄間 → N-HUB</div>
+      <div class="pipe-num">–</div>
+      <div style="font-size:11px;color:var(--gray-400);">NNHからN-HUBへパス</div>
+      <div class="pipe-detail">
+        NNHで取材した企業をN-HUBのサービスに繋ぐ流れ。小野寺・加茂が対応。
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--blue-light);border-radius:12px;padding:24px 28px;">
+    <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:12px;">メール文面（確定版）</div>
+    <div style="font-size:12px;line-height:2;color:var(--black);white-space:pre-line;font-family:monospace;background:white;padding:16px;border-radius:8px;border:1px solid var(--gray-200);">○○株式会社
+ご担当者様
+
+突然のご連絡失礼いたします。
+ノンネーム・ヒーロー運営事務局の井上でございます。
+
+このたび、貴社が北摂を代表する企業100選に選出されていることを拝見し、
+ぜひ取材のご相談をさせていただきたくご連絡いたしました。
+
+ノンネーム・ヒーローは、企業の「右腕」として組織を支える方々の想いや背景を発信する
+インタビューメディアです。産経新聞にも掲載いただいており、掲載記事は採用広報・
+企業ブランディング・会社説明会の紹介素材としてそのままご活用いただけます。
+
+▼産経新聞掲載記事
+https://www.sankei.com/article/20260326-FP275IONZJLDFJQRWMX7DIV3Q4/
+
+▼ノンネーム・ヒーロー公式サイト
+https://zeka.jp/nnh/
+
+もしご関心をお持ちいただけましたら、一度オンラインにて15〜20分ほどお時間をいただけますと幸いです。
+
+ご多忙のところ恐縮ですが、ご検討のほどよろしくお願いいたします。
+
+ノンネーム・ヒーロー運営事務局
+榊原</div>
+    <div style="font-size:11px;color:var(--blue);margin-top:10px;">※ 価格はメール段階では記載しない。アポ後の面談（縄間）でクロージング時に提示。</div>
+  </div>
+</div>
+
+<!-- 04: 取材フロー -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">04</span>
+    <h2 class="section-title">取材確定〜掲載までの全フロー</h2>
+  </div>
+
+  <div class="flow-wrap">
+
+    <div class="flow-phase">
+      <div class="phase-tag p1">STEP 1｜アポ〜取材確定</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-name">メール送付・アポ獲得</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">面談（15〜20分）クロージング</div>
+          <div class="flow-step-who">縄間</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">取材確定・公式LINE登録依頼</div>
+          <div class="flow-step-who">縄間</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="phase-tag p1">STEP 2｜取材前準備</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-name">質問PDF・回答フォームURL送付</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">電子契約書送付予告</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">取材1日前リマインド</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="phase-tag p2">STEP 3｜取材当日</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-name">オンライン取材（1.5H）</div>
+          <div class="flow-step-who">川原 ＋ 池田</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">宣材写真撮影</div>
+          <div class="flow-step-who">縄間（対面時）</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">会社情報・ロゴ確認</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="phase-tag p3">STEP 4｜取材後対応</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-name">お礼メール送付</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">電子契約書送付・返送確認</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">記事執筆（8件／月）</div>
+          <div class="flow-step-who">池田</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-phase">
+      <div class="phase-tag p4">STEP 5｜掲載</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-name">初稿確認・PDF＋Word準備</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">先方へ初校送付・修正確認</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">WordPress掲載</div>
+          <div class="flow-step-who">榊原</div>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-step">
+          <div class="flow-step-name">掲載報告・X投稿</div>
+          <div class="flow-step-who">縄間</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:var(--green-light);border-radius:10px;padding:16px 20px;">
+    <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px;">クロージングの型（縄間）</div>
+    <div style="font-size:12px;color:var(--black);line-height:1.9;">
+      ①NNHの紹介・産経新聞実績（3〜5分）　②相手のヒアリング・採用/広報の課題（5分）　③「通常5万円→今だけ3万円」を提示・日程調整（5〜7分）
+    </div>
+  </div>
+</div>
+
+<!-- 05: 役割分担 -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">05</span>
+    <h2 class="section-title">役割分担</h2>
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-dept dept-nnh">NNH事務局</div>
+      <div class="team-name">縄間（統括）</div>
+      <ul class="team-tasks">
+        <li>全体統括・進捗管理（週次MTG）</li>
+        <li>アポ後面談・クロージング（月最大8件）</li>
+        <li>公式LINE登録対応</li>
+        <li>X運用（投稿・引用・フォロー管理）</li>
+        <li>紹介によるアポ獲得（月3件見込）</li>
+      </ul>
+      <div class="team-cost">月契約／他事業兼務</div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-dept dept-nnh">NNH事務局</div>
+      <div class="team-name">榊原（運営リーダー）</div>
+      <ul class="team-tasks">
+        <li>メール営業・アポ取り（月150〜200件）</li>
+        <li>LINE登録後の全対応窓口</li>
+        <li>質問PDF・フォーム・契約書送付</li>
+        <li>取材後対応（お礼・初稿・WordPress）</li>
+        <li>会社情報・ロゴ確認・掲載管理</li>
+      </ul>
+      <div class="team-cost">時給1,300円</div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-dept dept-nnh">NNH事務局</div>
+      <div class="team-name">井上</div>
+      <ul class="team-tasks">
+        <li>X運用サポート（引用投稿・フォロー管理）</li>
+        <li>縄間のX業務を補助</li>
+      </ul>
+      <div class="team-cost">時給1,300円</div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-dept dept-nnh">NNH事務局</div>
+      <div class="team-name">谷口</div>
+      <ul class="team-tasks">
+        <li>ノンネームタイムズ執筆・掲載（月4件）</li>
+        <li>週次MTG参加</li>
+      </ul>
+      <div class="team-cost">時給1,300円</div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-dept dept-writer">ライター</div>
+      <div class="team-name">池田</div>
+      <ul class="team-tasks">
+        <li>取材参加（月4件）</li>
+        <li>記事執筆（月8件）</li>
+      </ul>
+      <div class="team-cost">記事単価5,000円／本</div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-dept dept-nnh">NNH事務局</div>
+      <div class="team-name">川原（代表）</div>
+      <ul class="team-tasks">
+        <li>取材参加（月4件）</li>
+        <li>紹介によるアポ獲得（月1件見込）</li>
+        <li>全体意思決定</li>
+      </ul>
+      <div class="team-cost">報酬想定なし</div>
+    </div>
+  </div>
+</div>
+
+<!-- 06: コスト試算 -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">06</span>
+    <h2 class="section-title">工数・人件費試算</h2>
+  </div>
+
+  <div class="cost-wrap">
+    <table class="cost-table">
+      <thead>
+        <tr>
+          <th>担当者</th>
+          <th>主な業務</th>
+          <th>月次工数</th>
+          <th>単価</th>
+          <th class="cost-num">月次コスト</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>池田</strong></td>
+          <td>記事執筆8件</td>
+          <td class="cost-note">単価制</td>
+          <td>5,000円／本</td>
+          <td class="cost-num amount">40,000円</td>
+        </tr>
+        <tr>
+          <td><strong>榊原</strong></td>
+          <td>メール営業＋取材後対応＋MTG</td>
+          <td>約36H</td>
+          <td>1,300円／H</td>
+          <td class="cost-num amount">43,200円</td>
+        </tr>
+        <tr>
+          <td><strong>井上</strong></td>
+          <td>X運用サポート</td>
+          <td>約16H</td>
+          <td>1,300円／H</td>
+          <td class="cost-num amount">20,800円</td>
+        </tr>
+        <tr>
+          <td><strong>谷口</strong></td>
+          <td>ノンネームタイムズ（月4件）</td>
+          <td>約3H</td>
+          <td>1,300円／H</td>
+          <td class="cost-num amount">3,600円</td>
+        </tr>
+        <tr>
+          <td><strong>縄間</strong></td>
+          <td>面談・X運用・統括（月契約）</td>
+          <td>約8H〜</td>
+          <td>月契約</td>
+          <td class="cost-num cost-note">月契約内</td>
+        </tr>
+        <tr>
+          <td><strong>川原</strong></td>
+          <td>取材・統括</td>
+          <td>–</td>
+          <td>–</td>
+          <td class="cost-num cost-note">報酬なし</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cost-total">
+      <div class="cost-total-label">月次人件費合計（変動費）</div>
+      <div class="cost-total-value">約107,600円／月</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div style="background:var(--gray-100);border-radius:12px;padding:20px 24px;">
+      <div style="font-size:12px;color:var(--gray-600);margin-bottom:8px;">初期（有料4件）の収支</div>
+      <div style="font-size:13px;line-height:2;">
+        売上：<strong>12万円</strong><br>
+        人件費：<strong>約10.8万円</strong><br>
+        粗利：<strong style="color:var(--green);">約1.2万円</strong>
+      </div>
+    </div>
+    <div style="background:var(--black);border-radius:12px;padding:20px 24px;color:white;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;">有料8件達成時の収支</div>
+      <div style="font-size:13px;line-height:2;color:rgba(255,255,255,0.8);">
+        売上：<strong style="color:var(--accent-mid);">24万円〜</strong><br>
+        人件費：<strong>約10.8万円</strong><br>
+        粗利：<strong style="color:var(--accent-mid);">約13万円〜</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07: X戦略 -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">07</span>
+    <h2 class="section-title">X（旧Twitter）収益化戦略</h2>
+  </div>
+
+  <div class="x-wrap">
+    <div class="x-header">
+      <div class="x-icon">✕</div>
+      <div class="x-header-text">
+        <h3>X 広告収益シェアプログラム</h3>
+        <p>条件達成後、月次売上に上乗せ。達成まではXを認知獲得・アポ補助ツールとして活用。</p>
+      </div>
+    </div>
+
+    <div class="x-grid">
+      <div class="x-card">
+        <div class="x-card-label">収益化条件</div>
+        <div class="x-card-content">
+          X Premium加入<br>
+          フォロワー500人以上<br>
+          3ヶ月で500万インプレッション
+        </div>
+      </div>
+      <div class="x-card">
+        <div class="x-card-label">現在の状況</div>
+        <div class="x-card-content">
+          フォロワー：415人<br>
+          （残り85人で条件達成）<br>
+          インプレッション：平均300／日
+        </div>
+      </div>
+      <div class="x-card">
+        <div class="x-card-label">運用体制</div>
+        <div class="x-card-content">
+          縄間：投稿メイン・戦略立案<br>
+          井上：引用投稿・フォロー管理サポート<br>
+          専門家の方針に沿って運用
+        </div>
+      </div>
+    </div>
+
+    <div class="x-status">
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">現在のフォロワー</div>
+        <div class="x-status-num">415人</div>
+      </div>
+      <div style="color:rgba(255,255,255,0.2);font-size:20px;">→</div>
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">収益化条件</div>
+        <div class="x-status-num">500人</div>
+      </div>
+      <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin:0 16px;position:relative;">
+        <div style="position:absolute;left:0;top:0;height:100%;width:83%;background:var(--accent-mid);border-radius:3px;"></div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">残り85人</div>
+    </div>
+  </div>
+</div>
+
+<!-- 08: ロードマップ -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">08</span>
+    <h2 class="section-title">ロードマップ</h2>
+  </div>
+
+  <div class="roadmap">
+    <div class="roadmap-line"></div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-month">今すぐ</div>
+      <div class="roadmap-dot"></div>
+      <div class="roadmap-content">
+        <div class="roadmap-target">体制整備・メール営業始動</div>
+        <div class="roadmap-detail">
+          榊原がメール営業担当に。井上がX運用サポートに。月150〜200件の送付を開始。有料4件・無料4件でキャパを埋めながら実績を積む。
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-month">1〜2ヶ月</div>
+      <div class="roadmap-dot"></div>
+      <div class="roadmap-content">
+        <div class="roadmap-target">月売上12万円安定・X収益化条件達成</div>
+        <div class="roadmap-detail">
+          有料4件を安定的に確保。Xフォロワー500人突破・収益化申請。掲載報告タイミングでの紹介依頼を習慣化。
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-month">3〜4ヶ月</div>
+      <div class="roadmap-dot"></div>
+      <div class="roadmap-content">
+        <div class="roadmap-target">有料6件・月売上18万円</div>
+        <div class="roadmap-detail">
+          無料枠を2件に縮小し有料比率を上げる。X収益化開始で売上を上乗せ。会員サービスの設計を開始。
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-month">5〜6ヶ月</div>
+      <div class="roadmap-dot"></div>
+      <div class="roadmap-content">
+        <div class="roadmap-target">有料8件・月売上24万円</div>
+        <div class="roadmap-detail">
+          取材をフル有料化。X収益化＋会員サービスで残り6万円を補填。月30万円達成の射程圏内へ。
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item goal">
+      <div class="roadmap-month" style="color:var(--black);font-weight:900;">🎯 目標</div>
+      <div class="roadmap-dot"></div>
+      <div class="roadmap-content">
+        <div class="roadmap-target">月次売上30万円達成</div>
+        <div class="roadmap-detail">
+          有料取材8件（24万）＋X収益化＋会員サービスで30万円を達成。持続可能な収益モデルが完成。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 09: まとめ -->
+<div class="page">
+  <div class="section-label">
+    <span class="section-num">09</span>
+    <h2 class="section-title">役割・KPIまとめ</h2>
+  </div>
+
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>担当者</th>
+        <th>所属</th>
+        <th>主な役割</th>
+        <th>KPI</th>
+        <th>単価</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>縄間</strong></td>
+        <td><span class="badge badge-nnh">NNH事務局</span></td>
+        <td>統括・面談・X運用・紹介</td>
+        <td>面談転換率・X投稿数</td>
+        <td>月契約</td>
+      </tr>
+      <tr>
+        <td><strong>榊原</strong></td>
+        <td><span class="badge badge-nnh">NNH事務局</span></td>
+        <td>メール営業・取材後全対応</td>
+        <td>月次送付数・アポ獲得数・掲載件数</td>
+        <td>1,300円／H</td>
+      </tr>
+      <tr>
+        <td><strong>井上</strong></td>
+        <td><span class="badge badge-nnh">NNH事務局</span></td>
+        <td>X運用サポート</td>
+        <td>月次投稿数・フォロワー増加数</td>
+        <td>1,300円／H</td>
+      </tr>
+      <tr>
+        <td><strong>谷口</strong></td>
+        <td><span class="badge badge-nnh">NNH事務局</span></td>
+        <td>ノンネームタイムズ（月4件）</td>
+        <td>月次掲載件数</td>
+        <td>1,300円／H</td>
+      </tr>
+      <tr>
+        <td><strong>池田</strong></td>
+        <td><span class="badge badge-writer">ライター</span></td>
+        <td>取材4件・記事執筆8件</td>
+        <td>月次執筆件数・納期遵守率</td>
+        <td>5,000円／本</td>
+      </tr>
+      <tr>
+        <td><strong>川原</strong></td>
+        <td><span class="badge badge-nnh">NNH事務局</span></td>
+        <td>取材4件・紹介・意思決定</td>
+        <td>取材件数・紹介数</td>
+        <td>報酬なし</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note" style="margin-top:24px;">
+    <strong>この資料の目的：</strong>上記の戦略・役割・コスト感でノンネーム・ヒーローを動かしていくことへの認識確認。月10.8万円の人件費をかけながら、有料取材の比率を上げていくことで月30万円達成を目指す方針で進める。
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>ノンネーム・ヒーロー｜戦略資料</strong>
+  NON NAME HERO ／ ZEKA Inc. ／ zeka.jp/nnh ／ 2025年5月
+</div>
+
+</body>
+</html>
